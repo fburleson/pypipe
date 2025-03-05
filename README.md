@@ -1,4 +1,4 @@
-# automl :gear:
+# pypipe :gear:
 A simple python library for automated machine learning and creating pipelines made with pandas and scikit-learn.
 
 ## Introduction :book:
