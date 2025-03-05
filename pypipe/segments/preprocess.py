@@ -22,14 +22,19 @@ class Impute(Transformer):
         self.columns = columns
         self.exclude = exclude
 
-    def transform(self, data: pd.DataFrame) -> pd.DataFrame:
+    def transform(
+        self,
+        data: pd.DataFrame,
+        num_strat: str = "mean",
+        cat_strat: str = "most_frequent",
+    ) -> pd.DataFrame:
         subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
-        mean_columns = subset.select_dtypes(include="number").columns
-        mode_columns = subset.select_dtypes(include="object").columns
+        num_columns = subset.select_dtypes(include="number").columns
+        cat_columns = subset.select_dtypes(include="object").columns
         transformer: ColumnTransformer = ColumnTransformer(
             transformers=[
-                ("mean", SimpleImputer(strategy="mean"), mean_columns),
-                ("mode", SimpleImputer(strategy="most_frequent"), mode_columns),
+                ("mean", SimpleImputer(strategy=num_strat), num_columns),
+                ("mode", SimpleImputer(strategy=cat_strat), cat_columns),
             ],
             remainder="passthrough",
             verbose_feature_names_out=False,
