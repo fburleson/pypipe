@@ -20,12 +20,15 @@ class Subset(Transformer):
 
 
 class Impute(Transformer):
-    def __init__(self, columns: list[str], exclude: bool = False):
+    def __init__(self, columns: list[str] = None, exclude: bool = False):
         self.columns = columns
         self.exclude = exclude
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
-        subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
+        if self.columns is None:
+            subset: pd.DataFrame = data[data.columns]
+        else:
+            subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
         num_columns = subset.select_dtypes(include="number").columns
         cat_columns = subset.select_dtypes(include="object").columns
         transformer: ColumnTransformer = ColumnTransformer(
@@ -44,12 +47,15 @@ class Impute(Transformer):
 
 
 class Encode(Transformer):
-    def __init__(self, columns: list[str], exclude: bool = False):
+    def __init__(self, columns: list[str] = None, exclude: bool = False):
         self.columns = columns
         self.exclude = exclude
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
-        subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
+        if self.columns is None:
+            subset: pd.DataFrame = data[data.columns]
+        else:
+            subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
         multiclass = subset.loc[:, subset.nunique() > 2].columns
         binary = subset.loc[:, subset.nunique() <= 2].columns
         transformer: ColumnTransformer = ColumnTransformer(
