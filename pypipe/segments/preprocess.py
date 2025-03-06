@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
+from sklearn.preprocessing import scale, minmax_scale
 from sklearn.compose import ColumnTransformer
 from pypipe.compose import Transformer
 
@@ -63,3 +64,29 @@ class Encode(Transformer):
             columns=transformer.get_feature_names_out(),
             index=data.index,
         )
+
+
+class StandardScale(Transformer):
+    def __init__(self, columns: list[str], exclude: bool = False):
+        self.columns = columns
+        self.exclude = exclude
+
+    def transform(self, data: pd.DataFrame) -> pd.DataFrame:
+        subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
+        subset = pd.DataFrame(scale(subset, axis=0), columns=self.columns)
+        output: pd.DataFrame = data.copy()
+        output[self.columns] = subset[self.columns]
+        return output
+
+
+class MinMaxScale(Transformer):
+    def __init__(self, columns: list[str], exclude: bool = False):
+        self.columns = columns
+        self.exclude = exclude
+
+    def transform(self, data: pd.DataFrame) -> pd.DataFrame:
+        subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
+        subset = pd.DataFrame(minmax_scale(subset, axis=0), columns=self.columns)
+        output: pd.DataFrame = data.copy()
+        output[self.columns] = subset[self.columns]
+        return output

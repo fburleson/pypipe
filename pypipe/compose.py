@@ -11,7 +11,7 @@ class Transformer(ABC):
         return self.transform(*args, **kwargs)
 
 
-class Pipeline:
+class Pipeline(Transformer):
     def __init__(self, transformers: list[Transformer]):
         self.transformers = transformers
 
@@ -20,6 +20,3 @@ class Pipeline:
         for transformer in self.transformers[1:]:
             out = transformer(out)
         return out
-
-    def __call__(self, *args, **kwargs) -> Any:
-        return self.transform(*args, **kwargs)
