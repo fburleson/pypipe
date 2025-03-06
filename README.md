@@ -1,5 +1,5 @@
 # pypipe :gear:
-A simple python library for automated machine learning and creating pipelines made with pandas and scikit-learn.
+A small, easy to use library for automated machine learning and highly composable pipelines. Made with scikit-learn and pandas.
 
 ## Introduction :book:
 This project was made to showcase my understanding of the machine learning pipeline/workflow and scikit-learn. It allows for quick development by automating the machine learning pipeline, from data preprocessing to model evaluation. Made to solve classification and regression problems whilst being being modular and easy to use.
