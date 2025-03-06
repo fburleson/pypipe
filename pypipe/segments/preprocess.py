@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 from sklearn.preprocessing import scale, minmax_scale
+from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from pypipe.compose import Transformer
 
@@ -90,3 +91,22 @@ class MinMaxScale(Transformer):
         output: pd.DataFrame = data.copy()
         output[self.columns] = subset[self.columns]
         return output
+
+
+class TrainTestSplit(Transformer):
+    def __init__(
+        self,
+        X: list[str],
+        y: list[str],
+        test_size: float = 0.2,
+        shuffle: bool = True,
+    ):
+        self.X = X
+        self.y = y
+        self.test_size = test_size
+        self.shuffle = shuffle
+
+    def transform(self, data: pd.DataFrame) -> pd.DataFrame:
+        return train_test_split(
+            data[self.X], data[self.y], test_size=self.test_size, shuffle=self.shuffle
+        )
