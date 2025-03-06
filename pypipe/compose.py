@@ -17,7 +17,10 @@ class MultiTransformer(Transformer):
 
     def transform(self, data) -> tuple[Any]:
         if len(self.transformers) == 1:
-            return self.transformers[0](*data)
+            if isinstance(data, tuple):
+                return self.transformers[0](*data)
+            else:
+                return self.transformers[0](data)
         output: list = []
         for i, data_i in enumerate(data):
             output.append(self.transformers[i](data_i))
