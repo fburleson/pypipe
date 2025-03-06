@@ -74,7 +74,9 @@ class StandardScale(Transformer):
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
         subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
-        subset = pd.DataFrame(scale(subset, axis=0), columns=self.columns)
+        subset = pd.DataFrame(
+            scale(subset, axis=0), columns=self.columns, index=data.index
+        )
         output: pd.DataFrame = data.copy()
         output[self.columns] = subset[self.columns]
         return output
@@ -87,7 +89,9 @@ class MinMaxScale(Transformer):
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
         subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
-        subset = pd.DataFrame(minmax_scale(subset, axis=0), columns=self.columns)
+        subset = pd.DataFrame(
+            minmax_scale(subset, axis=0), columns=self.columns, index=data.index
+        )
         output: pd.DataFrame = data.copy()
         output[self.columns] = subset[self.columns]
         return output
