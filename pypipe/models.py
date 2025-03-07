@@ -1,6 +1,6 @@
 from typing import Any
 from abc import abstractmethod
-from sklearn.linear_model import LogisticRegression
+from sklearn.base import BaseEstimator
 from pypipe.compose import Transformer
 
 
@@ -17,9 +17,9 @@ class Model(Transformer):
         pass
 
 
-class LogisticClassifier(Model):
-    def __init__(self):
-        self.model = LogisticRegression(solver="lbfgs")
+class ScikitModel(Model):
+    def __init__(self, models: BaseEstimator):
+        self.model = models
 
     def train(self, X, y):
         self.model.fit(X, y)

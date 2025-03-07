@@ -1,16 +1,17 @@
 import pandas as pd
 import numpy as np
 from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from pypipe.compose import Pipeline
-from pypipe.models import LogisticClassifier
+from pypipe.models import ScikitModel
 from pypipe.segments.preprocess import TrainTestSplit, MinMaxScale
 from pypipe.segments.util import ToPandas, ToNumpy, Concat, Passthrough
 
 
 def main():
     raw = load_iris()
-    model: LogisticClassifier = LogisticClassifier()
+    model: ScikitModel = ScikitModel(LogisticRegression())
     format_data: Pipeline = Pipeline(
         [
             [ToPandas(raw.feature_names), ToPandas(["species"])],
