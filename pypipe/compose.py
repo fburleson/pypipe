@@ -13,7 +13,12 @@ class Transformer(ABC):
 
 class MultiTransformer(Transformer):
     def __init__(self, transformers: list[Transformer]):
-        self.transformers = transformers
+        self.transformers: list[Transformer] = []
+        for segment in transformers:
+            if isinstance(segment, list):
+                self.transformers.append(MultiTransformer(segment))
+            else:
+                self.transformers.append(segment)
 
     def transform(self, data) -> tuple[Any]:
         if len(self.transformers) == 1:
