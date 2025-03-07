@@ -12,7 +12,7 @@ This project was made to showcase my understanding of the machine learning pipel
 ## Installation :gear:
 ```bash
 git clone --depth 1 git@github.com:fburleson/pypipe.git pypipe
-cd automl
+cd pypipe
 python3 -m venv .venv
 source .venv/bin/activate 
 pip install -e .
