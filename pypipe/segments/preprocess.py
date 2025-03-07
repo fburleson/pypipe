@@ -74,12 +74,15 @@ class Encode(Transformer):
 
 
 class StandardScale(Transformer):
-    def __init__(self, columns: list[str], exclude: bool = False):
+    def __init__(self, columns: list[str] = None, exclude: bool = False):
         self.columns = columns
         self.exclude = exclude
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
-        subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
+        if self.columns is None:
+            subset: pd.DataFrame = data[data.columns]
+        else:
+            subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
         subset = pd.DataFrame(
             scale(subset, axis=0), columns=self.columns, index=data.index
         )
@@ -89,12 +92,15 @@ class StandardScale(Transformer):
 
 
 class MinMaxScale(Transformer):
-    def __init__(self, columns: list[str], exclude: bool = False):
+    def __init__(self, columns: list[str] = None, exclude: bool = False):
         self.columns = columns
         self.exclude = exclude
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
-        subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
+        if self.columns is None:
+            subset: pd.DataFrame = data[data.columns]
+        else:
+            subset: pd.DataFrame = Subset(self.columns, self.exclude)(data)
         subset = pd.DataFrame(
             minmax_scale(subset, axis=0), columns=self.columns, index=data.index
         )
