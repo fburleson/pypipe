@@ -28,3 +28,8 @@ class Split(Transformer):
 class Concat(Transformer):
     def transform(self, *data: tuple[pd.DataFrame]) -> pd.DataFrame:
         return pd.concat(list(*data), axis=1)
+
+
+class ToNumpy(Transformer):
+    def transform(self, data: pd.DataFrame) -> pd.DataFrame:
+        return data.to_numpy()
