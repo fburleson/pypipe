@@ -1,5 +1,6 @@
 from itertools import chain
 from typing import Any
+import numpy as np
 import pandas as pd
 from pypipe.compose import Transformer
 
@@ -31,5 +32,17 @@ class Concat(Transformer):
 
 
 class ToNumpy(Transformer):
-    def transform(self, data: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, data: pd.DataFrame) -> np.ndarray:
         return data.to_numpy()
+
+
+class ToPandas(Transformer):
+    def __init__(self, columns: list[str] = None, index: list[str] = None, dtype=None):
+        self.columns = columns
+        self.index = index
+        self.dtype = dtype
+
+    def transform(self, array: np.ndarray) -> pd.DataFrame:
+        return pd.DataFrame(
+            array, columns=self.columns, index=self.index, dtype=self.dtype
+        )
