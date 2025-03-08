@@ -1,17 +1,17 @@
 import pandas as pd
 import numpy as np
 from sklearn.datasets import load_iris
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from pypipe.compose import Pipeline
 from pypipe.models import ScikitModel
 from pypipe.segments.preprocess import TrainTestSplit, MinMaxScale
 from pypipe.segments.util import ToPandas, ToNumpy, Concat, Passthrough
+from pypipe.auto.model_selection import search_classif_model
 
 
 def main():
     raw = load_iris()
-    model: ScikitModel = ScikitModel(LogisticRegression())
+    model: ScikitModel = None
     format_data: Pipeline = Pipeline(
         [
             [ToPandas(raw.feature_names), ToPandas(["species"])],
@@ -33,6 +33,12 @@ def main():
             [ToNumpy()] * 4,
         ]
     )
+    data: pd.DataFrame = format_data((raw.data, raw.target))
+    print(data)
+    X_train, X_test, y_train, y_test = preprocess(data)
+    model = search_classif_model(
+        X_train, X_test, np.squeeze(y_train), np.squeeze(y_test), metric=accuracy_score
+    )
     predict: Pipeline = Pipeline(
         [
             [model, Passthrough()],
@@ -40,10 +46,7 @@ def main():
             Concat(),
         ]
     )
-    data: pd.DataFrame = format_data((raw.data, raw.target))
-    print(data)
-    X_train, X_test, y_train, y_test = preprocess(data)
-    model.train(X_train, np.squeeze(y_train))
+    print(model.model)
     predictions: np.ndarray = predict((X_test, y_test)).to_numpy().T
     print(f"{accuracy_score(predictions[0], predictions[1]):.2%}")
 

@@ -18,8 +18,8 @@ class Model(Transformer):
 
 
 class ScikitModel(Model):
-    def __init__(self, models: BaseEstimator):
-        self.model = models
+    def __init__(self, model: BaseEstimator):
+        self.model = model
 
     def train(self, X, y):
         self.model.fit(X, y)
