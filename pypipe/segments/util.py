@@ -5,9 +5,15 @@ import pandas as pd
 from pypipe.compose import Transformer
 
 
-class Passthrough(Transformer):
-    def transform(self, data) -> Any:
-        return data
+class Subset(Transformer):
+    def __init__(self, columns: list[str], exclude: bool = False):
+        self.columns = columns
+        self.exclude = exclude
+
+    def transform(self, data: pd.DataFrame) -> pd.DataFrame:
+        if self.exclude:
+            return data.drop(self.columns, axis=1)
+        return data[self.columns]
 
 
 class Split(Transformer):
@@ -29,6 +35,11 @@ class Split(Transformer):
 class Concat(Transformer):
     def transform(self, *data: tuple[pd.DataFrame]) -> pd.DataFrame:
         return pd.concat(list(*data), axis=1)
+
+
+class Passthrough(Transformer):
+    def transform(self, data) -> Any:
+        return data
 
 
 class ToNumpy(Transformer):
