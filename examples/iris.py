@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.datasets import load_iris
 from sklearn.metrics import accuracy_score
-from sklearn.linear_model import LogisticRegression
+from pypipe.models import LogisticRegression
 from pypipe.compose import Pipeline
 from pypipe.models import ScikitModel
 from pypipe.segments.preprocess import TrainTestSplit, MinMaxScale
@@ -10,7 +10,7 @@ from pypipe.segments.util import ToPandas, ToNumpy, Concat, Passthrough
 
 def main():
     raw = load_iris()
-    model: ScikitModel = ScikitModel(LogisticRegression())
+    model: ScikitModel = LogisticRegression()
     preprocess: Pipeline = Pipeline(
         [
             [ToPandas(raw.feature_names), ToPandas(["species"])],
@@ -29,10 +29,9 @@ def main():
         ]
     )
     X_train, X_test, y_train, y_test = preprocess((raw.data, raw.target))
-    model.train(X_train, np.squeeze(y_train))
     predict: Pipeline = Pipeline(
         [
-            [model, Passthrough()],
+            [model.train(X_train, np.squeeze(y_train)), Passthrough()],
             [ToPandas()] * 2,
             Concat(),
         ]
