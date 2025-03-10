@@ -1,5 +1,6 @@
 from typing import Any
 from abc import ABC, abstractmethod
+from sklearn.base import TransformerMixin
 
 
 class Transformer(ABC):
@@ -46,3 +47,11 @@ class Pipeline(Transformer):
         for transformer in self.transformers[1:]:
             out = transformer(out)
         return out
+
+
+class ScikitTransformer(Transformer):
+    def __init__(self, transformer: TransformerMixin):
+        self.transformer = transformer
+
+    def transform(self, *args, **kwargs):
+        return self.transformer.fit_transform(*args, **kwargs)
