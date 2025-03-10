@@ -9,7 +9,7 @@ class Model(Transformer):
         return self.forward(*args, **kwargs)
 
     @abstractmethod
-    def train(self, X, y):
+    def train(self, X, y) -> Any:
         pass
 
     @abstractmethod
@@ -21,8 +21,9 @@ class ScikitModel(Model):
     def __init__(self, model: BaseEstimator):
         self.model = model
 
-    def train(self, X, y):
+    def train(self, X, y) -> Model:
         self.model.fit(X, y)
+        return self
 
     def forward(self, X):
         return self.model.predict(X)
