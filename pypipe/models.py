@@ -1,4 +1,5 @@
 from typing import Any
+from typing import Self
 from abc import abstractmethod
 from sklearn.base import BaseEstimator
 from sklearn.linear_model import LinearRegression as ScikitLinearRegression
@@ -12,7 +13,7 @@ class Model(Transformer):
         return self.forward(*args, **kwargs)
 
     @abstractmethod
-    def train(self, X, y) -> Any:
+    def train(self, X, y) -> Self:
         pass
 
     @abstractmethod
@@ -24,7 +25,7 @@ class ScikitModel(Model):
     def __init__(self, model: BaseEstimator):
         self.model = model
 
-    def train(self, X, y) -> Model:
+    def train(self, X, y) -> Self:
         self.model.fit(X, y)
         return self
 
