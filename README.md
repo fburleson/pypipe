@@ -7,7 +7,7 @@ This project was made to showcase my understanding of the machine learning pipel
 ## Features :sparkles:
 
 ## Requirements :clipboard:
-- Python >= 3.10
+- Python >= 3.11
 
 ## Installation :gear:
 ```bash
