@@ -5,6 +5,9 @@ A simple, easy to use library for automated machine learning and highly composab
 This project was made to showcase my understanding of the machine learning pipeline/workflow and scikit-learn. It allows for quick development by automating the machine learning pipeline, from data preprocessing to model evaluation. Made to solve classification and regression problems whilst being being modular and easy to use.
 
 ## Features :sparkles:
+- Building highly composable, custom machine learning pipelines, from preprocessing to model evaluation
+- Builtin compatibility with numpy, pandas and scikit-learn
+- Builtin compatibility with custom functions and transformers
 
 ## Requirements :clipboard:
 - Python >= 3.11
