@@ -1,7 +1,7 @@
-from typing import Any
+from typing import Any, Self
 from abc import ABC, abstractmethod
 import pandas as pd
-from sklearn.base import TransformerMixin
+from sklearn.base import TransformerMixin, BaseEstimator
 
 
 class Transformer(ABC):
@@ -9,21 +9,20 @@ class Transformer(ABC):
     def transform(self, *args, **kwargs) -> Any:
         pass
 
-    def get(self) -> Any:
-        return self
-
     def __call__(self, *args, **kwargs) -> Any:
         return self.transform(*args, **kwargs)
 
 
 class SequenceTransformer(Transformer):
-    def __init__(self, *transformers: list[callable]):
+    def __init__(self, *transformers: tuple[callable]):
         self.transformers: list[Transformer] = []
         for segment in transformers:
-            if isinstance(segment, list):
-                self.transformers.append(Parallel(segment))
+            if isinstance(segment, tuple):
+                self.transformers.append(Parallel(*segment))
             elif isinstance(segment, TransformerMixin):
                 self.transformers.append(ScikitTransformer(segment))
+            elif isinstance(segment, BaseEstimator):
+                self.transformers.append(ScikitModel(segment))
             else:
                 self.transformers.append(segment)
 
@@ -32,7 +31,25 @@ class SequenceTransformer(Transformer):
         pass
 
     def __getitem__(self, idx):
-        return self.transformers[idx].get()
+        return self.transformers[idx]
+
+
+class Model(Transformer):
+    def __init__(self, train: bool = True):
+        self.should_train = train
+
+    def transform(self, args, **kwargs) -> Any:
+        if self.should_train:
+            return self.train(*args, **kwargs)
+        return self.forward(args, **kwargs)
+
+    @abstractmethod
+    def train(self, X, y) -> Self:
+        pass
+
+    @abstractmethod
+    def forward(self, X) -> Any:
+        pass
 
 
 class Parallel(SequenceTransformer):
@@ -58,12 +75,22 @@ class Pipeline(SequenceTransformer):
 
 class ScikitTransformer(Transformer):
     def __init__(self, transformer: TransformerMixin):
-        self.transformer = transformer
+        self._transformer = transformer
 
     def transform(self, data, *args, **kwargs):
         if isinstance(data, pd.DataFrame):
-            self.transformer.set_output(transform="pandas")
-        return self.transformer.fit_transform(data, *args, **kwargs)
+            self._transformer.set_output(transform="pandas")
+        return self._transformer.fit_transform(data, *args, **kwargs)
 
-    def get(self) -> TransformerMixin:
-        return self.transformer
+
+class ScikitModel(Model):
+    def __init__(self, model: BaseEstimator, train: bool = True):
+        super().__init__(train)
+        self._model = model
+
+    def train(self, X, y) -> Self:
+        self._model.fit(X, y)
+        return self
+
+    def forward(self, X):
+        return self._model.predict(X)
