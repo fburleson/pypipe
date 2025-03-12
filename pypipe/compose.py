@@ -1,6 +1,4 @@
-import types
 from typing import Any
-from functools import partial
 from abc import ABC, abstractmethod
 import pandas as pd
 from sklearn.base import TransformerMixin
@@ -11,12 +9,15 @@ class Transformer(ABC):
     def transform(self, *args, **kwargs) -> Any:
         pass
 
+    def get(self) -> Any:
+        return self
+
     def __call__(self, *args, **kwargs) -> Any:
         return self.transform(*args, **kwargs)
 
 
 class SequenceTransformer(Transformer):
-    def __init__(self, *transformers: list[Transformer]):
+    def __init__(self, *transformers: list[callable]):
         self.transformers: list[Transformer] = []
         for segment in transformers:
             if isinstance(segment, list):
@@ -29,6 +30,9 @@ class SequenceTransformer(Transformer):
     @abstractmethod
     def transform(self, *args, **kwargs) -> Any:
         pass
+
+    def __getitem__(self, idx):
+        return self.transformers[idx].get()
 
 
 class Parallel(SequenceTransformer):
@@ -60,3 +64,6 @@ class ScikitTransformer(Transformer):
         if isinstance(data, pd.DataFrame):
             self.transformer.set_output(transform="pandas")
         return self.transformer.fit_transform(data, *args, **kwargs)
+
+    def get(self) -> TransformerMixin:
+        return self.transformer

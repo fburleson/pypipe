@@ -1,6 +1,4 @@
-import types
 from typing import Any
-from functools import partial
 import numpy as np
 import pandas as pd
 from pypipe.compose import Transformer
@@ -51,11 +49,6 @@ class Split(Transformer):
 class Passthrough(Transformer):
     def transform(self, data) -> Any:
         return data
-
-
-class ToNumpy(Transformer):
-    def transform(self, data: pd.DataFrame) -> np.ndarray:
-        return data.to_numpy(copy=True)
 
 
 class ToPandas(Transformer):
