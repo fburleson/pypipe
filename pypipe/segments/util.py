@@ -27,6 +27,7 @@ class Subset(Transformer):
             return self._transform_pandas(data)
         if isinstance(data, np.ndarray):
             return self._transform_numpy(data)
+        raise TypeError(f"{type(data)} is not of type {pd.DataFrame} or {np.ndarray}")
 
 
 class Split(Transformer):
@@ -45,6 +46,7 @@ class Split(Transformer):
             return self._transform_pandas(data)
         if isinstance(data, np.ndarray):
             return self._transform_numpy(data)
+        raise TypeError(f"{type(data)} is not of type {pd.DataFrame} or {np.ndarray}")
 
 
 class ScikitTransformer(Transformer):
