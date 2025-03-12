@@ -1,5 +1,7 @@
 from typing import Any
 from abc import ABC, abstractmethod
+import pandas as pd
+from sklearn.base import TransformerMixin
 
 
 class Transformer(ABC):
@@ -11,12 +13,24 @@ class Transformer(ABC):
         return self.transform(*args, **kwargs)
 
 
+class ScikitTransformer(Transformer):
+    def __init__(self, transformer: TransformerMixin):
+        self.transformer = transformer
+
+    def transform(self, data, *args, **kwargs):
+        if isinstance(data, pd.DataFrame):
+            self.transformer.set_output(transform="pandas")
+        return self.transformer.fit_transform(data, *args, **kwargs)
+
+
 class Parallel(Transformer):
     def __init__(self, transformers: list[Transformer]):
         self.transformers: list[Transformer] = []
         for segment in transformers:
             if isinstance(segment, list):
                 self.transformers.append(Parallel(segment))
+            elif isinstance(segment, TransformerMixin):
+                self.transformers.append(ScikitTransformer(segment))
             else:
                 self.transformers.append(segment)
 
@@ -38,6 +52,8 @@ class Pipeline(Transformer):
         for segment in pipeline:
             if isinstance(segment, list):
                 self.transformers.append(Parallel(segment))
+            elif isinstance(segment, TransformerMixin):
+                self.transformers.append(ScikitTransformer(segment))
             else:
                 self.transformers.append(segment)
 

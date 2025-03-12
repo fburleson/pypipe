@@ -3,7 +3,6 @@ from typing import Any
 from functools import partial
 import numpy as np
 import pandas as pd
-from sklearn.base import TransformerMixin
 from pypipe.compose import Transformer
 
 
@@ -49,19 +48,6 @@ class Split(Transformer):
         raise TypeError(f"{type(data)} is not of type {pd.DataFrame} or {np.ndarray}")
 
 
-class ScikitTransformer(Transformer):
-    def __init__(self, transformer: TransformerMixin):
-        self.transformer = transformer
-
-    def transform(self, data, *args, **kwargs):
-        if isinstance(data, pd.DataFrame):
-            self.transformer.set_output(transform="pandas")
-        return self.transformer.fit_transform(data, *args, **kwargs)
-
-    def get(self) -> TransformerMixin:
-        return self.transformer
-
-
 class FuncTransformer(Transformer):
     def __init__(self, callable: callable, *args, **kwargs):
         self.raw_callable = callable
@@ -70,7 +56,7 @@ class FuncTransformer(Transformer):
     def transform(self, data, *args, **kwargs) -> Any:
         if isinstance(self.raw_callable, types.MethodType):
             return self.callable(*args, **kwargs)
-        return self.callable(data, *args, **kwargs)
+        return self.callable(self=data, *args, **kwargs)
 
 
 class Passthrough(Transformer):
