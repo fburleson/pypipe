@@ -1,23 +1,22 @@
 from typing import Any
 from abc import ABC, abstractmethod
-from sklearn.base import TransformerMixin
 
 
 class Transformer(ABC):
     @abstractmethod
-    def transform(self, data) -> Any:
+    def transform(self, *args, **kwargs) -> Any:
         pass
 
     def __call__(self, *args, **kwargs) -> Any:
         return self.transform(*args, **kwargs)
 
 
-class MultiTransformer(Transformer):
+class Parallel(Transformer):
     def __init__(self, transformers: list[Transformer]):
         self.transformers: list[Transformer] = []
         for segment in transformers:
             if isinstance(segment, list):
-                self.transformers.append(MultiTransformer(segment))
+                self.transformers.append(Parallel(segment))
             else:
                 self.transformers.append(segment)
 
@@ -34,11 +33,11 @@ class MultiTransformer(Transformer):
 
 
 class Pipeline(Transformer):
-    def __init__(self, pipeline: list[Transformer]):
+    def __init__(self, *pipeline: list[Transformer]):
         self.transformers: list[Transformer] = []
         for segment in pipeline:
             if isinstance(segment, list):
-                self.transformers.append(MultiTransformer(segment))
+                self.transformers.append(Parallel(segment))
             else:
                 self.transformers.append(segment)
 
@@ -47,11 +46,3 @@ class Pipeline(Transformer):
         for transformer in self.transformers[1:]:
             out = transformer(out)
         return out
-
-
-class ScikitTransformer(Transformer):
-    def __init__(self, transformer: TransformerMixin):
-        self.transformer = transformer
-
-    def transform(self, *args, **kwargs):
-        return self.transformer.fit_transform(*args, **kwargs)

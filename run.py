@@ -3,9 +3,9 @@ import subprocess
 
 def main():
     models: dict = {
-        "iris": [
-            ["examples/iris.py"],
-            """A simple multi classifier using logistic regression and the classic iris data set""",
+        "titanic": [
+            ["examples/titanic.py"],
+            """""",
         ],
     }
     is_exit = "n"

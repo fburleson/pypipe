@@ -2,14 +2,16 @@ from typing import Any
 from typing import Self
 from abc import abstractmethod
 from sklearn.base import BaseEstimator
-from sklearn.linear_model import LinearRegression as ScikitLinearRegression
-from sklearn.linear_model import LogisticRegression as ScikitLogisticRegression
-from sklearn.svm import SVC as ScikitSVC
 from pypipe.compose import Transformer
 
 
 class Model(Transformer):
+    def __init__(self, train: bool = True):
+        self.train = train
+
     def transform(self, *args, **kwargs) -> Any:
+        if self.train:
+            return self.train(*args, **kwargs)
         return self.forward(*args, **kwargs)
 
     @abstractmethod
@@ -32,17 +34,5 @@ class ScikitModel(Model):
     def forward(self, X):
         return self.model.predict(X)
 
-
-class LinearRegression(ScikitModel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(ScikitLinearRegression(*args, **kwargs))
-
-
-class LogisticRegression(ScikitModel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(ScikitLogisticRegression(*args, **kwargs))
-
-
-class SVC(ScikitModel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(ScikitSVC(*args, **kwargs))
+    def get(self) -> BaseEstimator:
+        return self.model
