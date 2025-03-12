@@ -48,17 +48,6 @@ class Split(Transformer):
         raise TypeError(f"{type(data)} is not of type {pd.DataFrame} or {np.ndarray}")
 
 
-class FuncTransformer(Transformer):
-    def __init__(self, callable: callable, *args, **kwargs):
-        self.raw_callable = callable
-        self.callable = partial(callable, *args, **kwargs)
-
-    def transform(self, data, *args, **kwargs) -> Any:
-        if isinstance(self.raw_callable, types.MethodType):
-            return self.callable(*args, **kwargs)
-        return self.callable(self=data, *args, **kwargs)
-
-
 class Passthrough(Transformer):
     def transform(self, data) -> Any:
         return data
