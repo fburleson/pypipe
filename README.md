@@ -14,6 +14,7 @@ This project was made to showcase my understanding of the machine learning pipel
 - Python >= 3.11
 
 ## Installation :gear:
+### Linux
 ```bash
 git clone --depth 1 git@github.com:fburleson/pypipe.git pypipe
 cd pypipe
@@ -22,8 +23,20 @@ source .venv/bin/activate
 pip install -e .
 pytest
 ```
+### Windows
+```bash
+git clone --depth 1 https://github.com/fburleson/pypipe.git pypipe
+cd pypipe
+python -m venv .venv
+.\.venv\Scripts\activate 
+pip install -e .
+pytest
+```
 
 ## Usage :computer:
+```bash
+python run.py
+```
 ```bash
 python3 run.py
 ```
