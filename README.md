@@ -23,7 +23,7 @@ source .venv/bin/activate
 pip install -e .
 pytest
 ```
-### Windows
+### Windows (Powershell)
 ```bash
 git clone --depth 1 https://github.com/fburleson/pypipe.git pypipe
 cd pypipe
