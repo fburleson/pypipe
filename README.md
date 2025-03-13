@@ -8,6 +8,7 @@ This project was made to showcase my understanding of the machine learning pipel
 - Building highly composable, custom machine learning pipelines, from preprocessing to model evaluation
 - Builtin compatibility with numpy, pandas and scikit-learn
 - Builtin compatibility with custom functions and transformers
+- Saving and loading pipelines
 
 ## Requirements :clipboard:
 - Python >= 3.11

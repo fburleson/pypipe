@@ -6,7 +6,7 @@ setup(
     long_description=open("README.md").read(),
     packages=find_packages(),
     version="0.1.0",
-    install_requires=["numpy", "seaborn", "pandas", "scikit-learn", "pytest"],
+    install_requires=["numpy", "seaborn", "pandas", "scikit-learn", "dill", "pytest"],
     author="Joel Burleson",
     url="https://github.com/fburleson/pypipe",
     python_requires=">=3.11",
