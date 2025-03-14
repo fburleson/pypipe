@@ -63,10 +63,9 @@ def train_test():
     preprocess: Pipeline = load_pipeline("titanic_preprocess_pipeline")
     train: Pipeline = Pipeline(preprocess, DecisionTreeClassifier())
     model: Model = train(train_data)
-    model.should_train = False
     test: Pipeline = Pipeline(
         preprocess,
-        (model, lambda x: x),
+        (model.forward, lambda x: x),
     )
     y_pred, y_true = test(test_data)
     print(f"{accuracy_score(y_true, y_pred):.2%}")

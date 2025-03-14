@@ -22,7 +22,7 @@ class SequenceTransformer(Transformer):
             elif isinstance(segment, TransformerMixin):
                 self.transformers.append(ScikitTransformer(segment))
             elif isinstance(segment, BaseEstimator):
-                self.transformers.append(ScikitModel(segment))
+                self.transformers.append(ScikitModel(segment).train)
             else:
                 self.transformers.append(segment)
 
@@ -35,16 +35,20 @@ class SequenceTransformer(Transformer):
 
 
 class Model(Transformer):
-    def __init__(self, train: bool = True):
-        self.should_train = train
+    def __init__(self, **params):
+        self.params = params
 
     def transform(self, args, **kwargs) -> Any:
-        if self.should_train:
-            return self.train(*args, **kwargs)
         return self.forward(args, **kwargs)
 
+    def set_params(self, **params):
+        self.params.update(params)
+
+    def get_param(self, param: str) -> Any:
+        return self.params[param]
+
     @abstractmethod
-    def train(self, X, y) -> Self:
+    def train(self) -> Self:
         pass
 
     @abstractmethod
@@ -85,11 +89,15 @@ class ScikitTransformer(Transformer):
 
 class ScikitModel(Model):
     def __init__(self, model: BaseEstimator, train: bool = True):
-        super().__init__(train)
+        super().__init__(train=train, params=model.get_params())
         self._model = model
 
-    def train(self, X, y) -> Self:
-        self._model.fit(X, y)
+    def set_params(self, **params):
+        super().set_params(params)
+        self._model.set_params(params)
+
+    def train(self, args) -> Self:
+        self._model.fit(*args)
         return self
 
     def forward(self, X):
