@@ -50,7 +50,7 @@ def main():
         ),
         (lambda x: x, np.squeeze),
     )
-    save_pipeline(preprocess, "titanic_preprocess_pipeline")
+    save_pipeline(preprocess, "titanic_preprocess_pipeline.pipe")
 
 
 def train_test():
@@ -60,7 +60,7 @@ def train_test():
     )
     train_data: pd.DataFrame = pd.concat([X_train, y_train], axis=1)
     test_data: pd.DataFrame = pd.concat([X_test, y_test], axis=1)
-    preprocess: Pipeline = load_pipeline("titanic_preprocess_pipeline")
+    preprocess: Pipeline = load_pipeline("titanic_preprocess_pipeline.pipe")
     train: Pipeline = Pipeline(*preprocess, DecisionTreeClassifier())
     model: Model = train(train_data)
     test: Pipeline = Pipeline(
