@@ -34,12 +34,9 @@ class SequenceTransformer(Transformer):
         return self.transformers[idx]
 
 
-class Model(Transformer):
+class Model:
     def __init__(self, **params):
         self.params = params
-
-    def transform(self, args, **kwargs) -> Any:
-        return self.forward(args, **kwargs)
 
     def set_params(self, **params):
         self.params.update(params)
