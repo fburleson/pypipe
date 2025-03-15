@@ -61,7 +61,10 @@ def train_test():
     train_data: pd.DataFrame = pd.concat([X_train, y_train], axis=1)
     test_data: pd.DataFrame = pd.concat([X_test, y_test], axis=1)
     preprocess: Pipeline = load_pipeline("titanic_preprocess_pipeline.pipe")
-    train: Pipeline = Pipeline(*preprocess, DecisionTreeClassifier())
+    train: Pipeline = Pipeline(
+        *preprocess,
+        DecisionTreeClassifier(),
+    )
     model: Model = train(train_data)
     test: Pipeline = Pipeline(
         *preprocess,

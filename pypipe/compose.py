@@ -90,11 +90,14 @@ class ScikitModel(Model):
         self._model = model
 
     def set_params(self, **params):
-        super().set_params(params)
-        self._model.set_params(params)
+        super().set_params(**params)
+        self._model.set_params(**params)
 
-    def train(self, args) -> Self:
-        self._model.fit(*args)
+    def train(self, X, y=None) -> Self:
+        if isinstance(X, tuple):
+            self._model.fit(*X)
+        else:
+            self._model.fit(X, y)
         return self
 
     def forward(self, X):
