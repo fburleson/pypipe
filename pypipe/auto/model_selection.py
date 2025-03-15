@@ -6,8 +6,8 @@ from pypipe.compose import Model, ScikitModel
 
 def grid_search_model(
     X_train,
-    y_train,
     X_test,
+    y_train,
     y_test,
     model: Model | BaseEstimator,
     eval_func: callable,
@@ -40,8 +40,8 @@ def grid_search_model(
 
 def auto_select_model(
     X_train,
-    y_train,
     X_test,
+    y_train,
     y_test,
     eval_func: callable,
     minimize: bool,

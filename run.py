@@ -5,7 +5,7 @@ def main():
     models: dict = {
         "titanic": [
             ["examples/titanic.py"],
-            """""",
+            """A pipeline including imputing, encoding, feature selection, model training and a trained model.""",
         ],
     }
     is_exit = "n"

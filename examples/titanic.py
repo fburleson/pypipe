@@ -13,7 +13,7 @@ from pypipe.compose import Pipeline, Model
 from pypipe.segments.util import Subset, Split
 
 
-def main():
+def preprocess_train():
     features: list[str] = [
         "sex",
         "age",
@@ -27,6 +27,11 @@ def main():
     encoded_features.remove("embarked")
     encoded_features.extend(["embarked_C", "embarked_Q", "embarked_S"])
     targets: list[str] = ["survived"]
+    raw_openml = fetch_openml("titanic", version=1, as_frame=True)
+    X_train, X_test, y_train, y_test = train_test_split(
+        raw_openml.data, raw_openml.target
+    )
+    train_data: pd.DataFrame = pd.concat([X_train, y_train], axis=1)
     preprocess: Pipeline = Pipeline(
         Subset(features + targets),
         ColumnTransformer(
@@ -50,17 +55,6 @@ def main():
         ),
         (lambda x: x, np.squeeze),
     )
-    save_pipeline(preprocess, "titanic_preprocess_pipeline.pipe")
-
-
-def train_test():
-    raw_openml = fetch_openml("titanic", version=1, as_frame=True)
-    X_train, X_test, y_train, y_test = train_test_split(
-        raw_openml.data, raw_openml.target
-    )
-    train_data: pd.DataFrame = pd.concat([X_train, y_train], axis=1)
-    test_data: pd.DataFrame = pd.concat([X_test, y_test], axis=1)
-    preprocess: Pipeline = load_pipeline("titanic_preprocess_pipeline.pipe")
     train: Pipeline = Pipeline(
         *preprocess,
         DecisionTreeClassifier(),
@@ -70,10 +64,20 @@ def train_test():
         *preprocess,
         (model.forward, lambda x: x),
     )
-    y_pred, y_true = test(test_data)
+    save_pipeline(test, "model.pipe")
+
+
+def test():
+    raw_openml = fetch_openml("titanic", version=1, as_frame=True)
+    X_train, X_test, y_train, y_test = train_test_split(
+        raw_openml.data, raw_openml.target
+    )
+    test_data: pd.DataFrame = pd.concat([X_test, y_test], axis=1)
+    model: Pipeline = load_pipeline("model.pipe")
+    y_pred, y_true = model(test_data)
     print(f"{accuracy_score(y_true, y_pred):.2%}")
 
 
 if __name__ == "__main__":
-    main()
-    train_test()
+    preprocess_train()
+    test()
